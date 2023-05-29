@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="<http://www.thymeleaf.org>">
+<head>
+    <meta charset="UTF-8">
+    <title>Consulta de CEP</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<h1>Consulta de CEP</h1>
+
+<!--Campo em que o usuário digita o cep-->
+
+<label for="cep">CEP:</label>
+<input type="text" id="cep" name="cep" placeholder="Digite o CEP">
+
+<br>
+
+<!--Botão em que o usuário pressiona para utilizar o serviço-->
+
+<button onclick="consultarCEP()">Consultar</button>
+
+<h2>Informações do Endereço:</h2>
+
+<p id="logradouro"></p>
+<p id="bairro"></p>
+<p id="cidade"></p>
+<p id="estado"></p>
+
+<script>
+    function consultarCEP() {
+        var cep = document.getElementById("cep").value;
+
+        // Limpa os campos de endereço
+        document.getElementById("logradouro").textContent = "";
+        document.getElementById("bairro").textContent = "";
+        document.getElementById("cidade").textContent = "";
+        document.getElementById("estado").textContent = "";
+
+        // Faz a requisição à API do ViaCEP
+        $.ajax({
+            url: "https://viacep.com.br/ws/" + cep + "/json/",
+            type: "GET",
+            success: function(response) {
+                if (!response.erro) {
+                    document.getElementById("logradouro").textContent = "Logradouro: " + response.logradouro;
+                    document.getElementById("bairro").textContent = "Bairro: " + response.bairro;
+                    document.getElementById("cidade").textContent = "Cidade: " + response.localidade;
+                    document.getElementById("estado").textContent = "Estado: " + response.uf;
+                } else {
+                    alert("CEP não encontrado.");
+                }
+            },
+            error: function() {
+                alert("Não foi possível localizar o endereço. Verifique se o CEP foi digitado corretamente!");
+            }
+        });
+    }
+</script>
+</body>
+
+<!--Costumização da exibição do arquivo HTML-->
+
+<style>
+    body {
+        background-color: black;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+    }
+</style>
+
+</html>
